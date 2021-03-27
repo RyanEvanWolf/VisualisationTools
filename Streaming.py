@@ -39,6 +39,9 @@ class PlayBackSettings():
         self.ptr_settings.contents.RefreshRate_Hz=ctypes.c_uint8(Rate)          
     def setFrameNumber(self,number):
         self.ptr_settings.contents.FrameNumber=ctypes.c_uint64(number)
-
+    def getRefreshRate(self):
+        return int(self.ptr_settings.contents.RefreshRate_Hz)
+    def getFrameNumber(self):
+        return int(self.ptr_settings.contents.FrameNumber)
         
     

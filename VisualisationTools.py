@@ -37,7 +37,7 @@ def createMapFromFile(ini):
         sys.exit("Unhandled Exception - Closing")  
     baseImage=np.memmap('tmp/base',
                         dtype='uint8',
-                        mode='w+',
+                        mode='r+',
                         shape=(100,200))
 
     return baseImage
