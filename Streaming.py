@@ -1,5 +1,7 @@
 import ctypes
-import struct
+import mmap
+
+
 import configparser
 
 import sys
@@ -9,24 +11,34 @@ import mmap
 
 
 class struct_Playback(ctypes.Structure):
-    _fields_ = [ ("RefreshRate_Hz",ctypes.c_uint8)]
+    _fields_ = [ ("RefreshRate_Hz",ctypes.c_uint8),
+                 ("Paused",ctypes.c_uint8),
+                 ("Kill",ctypes.c_uint8),
+                 ("FrameNumber",ctypes.c_uint64)]
+    def __repr__(self):
+        return "{0},{1}".format(self.RefreshRate_Hz,
+                                self.FrameNumber)
 
-    # def __init__(self,Rate_Hz=15,Paused=0):
-    #     self.RefreshRate_Hz=Rate_Hz
-    #     self.Pause=Paused
 
-
-# class shr_Playback(struct_Playback):
-#     def __init__(self,mmapDir="tmp/playback_map",Rate=0,Pause=0):
-#         self.f=open(mmapDir,'w+')
-#         self.map=mmap.mmap(self.f.fileno(),
-#                         ct.sizeof(struct_Playback),
-#                         access=mmap.ACCESS_WRITE)
-#         self=ct.Structure.from_buffer(self.map,struct_Playback)
-# class playBackManager:
-#     def __init__(self,playback_dict):
-#         self.settings=playBackSettings(0,0)
-#         self.imageNumber=0
+class PlayBackSettings():
+    def __init__(self,configIni=None,mapFile="tmp/playback.mmap"):
+        if(configIni==None):
+            fPermission='r'
+            mapPermission=mmap.ACCESS_READ
+        else:
+            fPermission='r+'
+            mapPermission=mmap.ACCESS_WRITE
+        self.f=open(mapFile,fPermission)
+        self.map=mmap.mmap(self.f.fileno(),
+                        ctypes.sizeof(struct_Playback),
+                        access=mapPermission)  
+        self.ptr_settings=ctypes.POINTER(struct_Playback)
+        mmapAddress=ctypes.addressof(ctypes.c_uint8.from_buffer(self.map))
+        self.ptr_settings=ctypes.cast(mmapAddress,self.ptr_settings)
+    def setRefreshRate(self,Rate):
+        self.ptr_settings.contents.RefreshRate_Hz=ctypes.c_uint8(Rate)          
+    def setFrameNumber(self,number):
+        self.ptr_settings.contents.FrameNumber=ctypes.c_uint64(number)
 
         
     
