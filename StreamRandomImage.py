@@ -19,13 +19,10 @@ if(validConfig):
         imageMap=vis.createMapFromFile(ini)
 
         onesImage=np.random.rand(imageMap.shape[0],imageMap.shape[1])
-        input("Push to Stream")
-        for i in range(0,10*30):
-            print(i)
-            sys.stdout.flush()
+        for i in range(0,20*10):
             imageMap[:]=i*25*onesImage
             settings.setFrameNumber(i)
-            time.sleep(1/30)
+            time.sleep(1/10)
     except Exception as e:
         print(e)
         raise RuntimeError("Unhandled Exception: Closing")
